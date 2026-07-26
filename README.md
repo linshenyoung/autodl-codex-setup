@@ -49,6 +49,46 @@ Host autodl-example
   User <ssh-user>
 ```
 
+## Copy-paste prompt for Codex
+
+After installing the Skill, copy the prompt below into Codex. Replace the values inside `<...>` first. GitHub's code blocks include a copy button.
+
+```text
+Use the autodl-codex-setup Skill to configure Codex on this remote AutoDL server.
+
+SSH details:
+Host <ssh-alias>
+  HostName <your-autodl-host>
+  Port <ssh-port>
+  User <ssh-user>
+
+Local HTTP proxy port: <local-proxy-port>
+Preferred unique remote proxy port: <remote-proxy-port>
+
+Please complete the workflow end to end:
+1. Inspect the local proxy, existing SSH host block, and the remote server's OS, Node.js, npm, Codex CLI, Codex config, VS Code settings, and login status.
+2. Add or update only this host's SSH RemoteForward so the remote proxy port maps to the local proxy port. Preserve unrelated settings and avoid port conflicts.
+3. Configure the remote Codex and VS Code proxy settings using the remote proxy port.
+4. Install Node.js and the official Codex CLI only if they are missing or unusable.
+5. Run `codex login --device-auth`. Show me the device URL and one-time code, then wait for me to finish browser confirmation before continuing.
+6. Verify `codex login status`, Codex version, SSH connectivity, and the end-to-end proxy path.
+
+Do not print or commit auth.json, tokens, passwords, private keys, device codes after use, or real infrastructure details. Do not claim completion until every verification step has passed. Report changed files, remote paths, ports, and any remaining manual action without exposing secrets.
+```
+
+### Example values
+
+Use values from your own server only; the following are intentionally non-real placeholders:
+
+```text
+SSH alias: autodl-example
+HostName: <your-autodl-host>
+SSH port: <ssh-port>
+User: <ssh-user>
+Local proxy port: <local-proxy-port>
+Remote proxy port: <remote-proxy-port>
+```
+
 ## Safety notes
 
 - Give each host a unique remote forwarding port.

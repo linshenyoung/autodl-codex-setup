@@ -49,6 +49,46 @@ Host autodl-example
   User <SSH用户>
 ```
 
+## 可直接复制给 Codex 的 Prompt
+
+安装 Skill 后，复制下面的 Prompt 到 Codex。请先把 `<...>` 中的占位符替换成你自己的信息。GitHub 代码块右上角通常会提供复制按钮。
+
+```text
+请使用 autodl-codex-setup Skill，为下面这台远程 AutoDL 服务器配置 Codex。
+
+SSH 信息：
+Host <SSH别名>
+  HostName <你的服务器地址>
+  Port <SSH端口>
+  User <SSH用户>
+
+本机 HTTP 代理端口：<本机代理端口>
+建议使用的、与其他服务器不冲突的远端代理端口：<服务器代理端口>
+
+请端到端完成以下流程：
+1. 检查本机代理、现有 SSH 主机配置，以及远程服务器的系统、Node.js、npm、Codex CLI、Codex 配置、VS Code 设置和登录状态。
+2. 只新增或修改这台服务器对应的 SSH RemoteForward，使远端代理端口转发到本机代理端口；保留其他配置并避免端口冲突。
+3. 使用远端代理端口配置远程 Codex 和 VS Code。
+4. 仅在 Node.js 或 Codex CLI 缺失或不可用时安装它们。
+5. 执行 `codex login --device-auth`，把设备登录网址和一次性验证码展示给我，然后等待我完成浏览器确认再继续。
+6. 验证 `codex login status`、Codex 版本、SSH 连通性和完整代理链路。
+
+不要打印或提交 auth.json、Token、密码、私钥、使用后的一次性验证码或真实基础设施细节。所有验证步骤通过后才能报告完成；请报告修改的文件、远程路径、端口和仍需我手动完成的步骤，但不要暴露敏感信息。
+```
+
+### 占位符说明
+
+请使用你自己的服务器信息；下面仅是非真实占位符：
+
+```text
+SSH别名：autodl-example
+服务器地址：<你的服务器地址>
+SSH端口：<SSH端口>
+SSH用户：<SSH用户>
+本机代理端口：<本机代理端口>
+服务器代理端口：<服务器代理端口>
+```
+
 ## 安全说明
 
 - 每台服务器应使用独立的远端转发端口。
