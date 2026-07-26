@@ -1,79 +1,60 @@
-<p align="center">
-  <strong>AutoDL Codex Setup</strong>
-</p>
+# AutoDL Codex Setup
 
 <p align="center">
   <a href="README.zh-CN.md">简体中文</a> · <a href="README.md">English</a>
 </p>
 
-Configure [OpenAI Codex](https://developers.openai.com/codex/) on an AutoDL or similar remote Ubuntu server through Windows SSH and VS Code Remote-SSH.
+Configure [OpenAI Codex](https://developers.openai.com/codex/) on AutoDL and similar remote Linux servers through Windows SSH and VS Code Remote-SSH.
 
-## What it covers
+This repository contains a reusable Codex Skill. It is designed for public use and intentionally contains no personal hostnames, credentials, tokens, device codes, or private infrastructure details.
 
-- Host-scoped `RemoteForward` for a local HTTP proxy
-- Remote Codex proxy configuration in `~/.codex/config.toml`
-- VS Code Remote-SSH proxy settings
-- Node.js and global Codex CLI installation when missing
-- `codex login --device-auth` and safe status verification
-- Port-conflict checks and end-to-end proxy validation
+## What it handles
 
-## Quick example
+- Unique SSH aliases when the local config contains duplicate hostname blocks
+- Host-scoped SSH `RemoteForward` from the remote server to a local HTTP proxy
+- Codex proxy settings in `~/.codex/config.toml`
+- VS Code Remote-SSH proxy settings without clobbering unrelated JSON keys
+- Node.js and the Codex CLI installation when missing
+- Layered SSH, proxy, endpoint, authentication, timeout, and cleanup checks
+- Safe interactive `codex login --device-auth` handoff
+- Explicit opt-in handling for an existing local `auth.json` fallback
 
-Replace the placeholders with your own server values. Do not commit real hostnames, ports, usernames, credentials, or device codes.
+## Install
 
-```ssh
-Host autodl-example
-  HostName <your-autodl-host>
-  Port <ssh-port>
-  User <ssh-user>
-  RemoteForward <remote-proxy-port> 127.0.0.1:<local-proxy-port>
+### Option A: ask Codex to install it
+
+Copy this prompt into your Codex client:
+
+```text
+Install the public autodl-codex-setup Skill from https://github.com/linshenyoung/autodl-codex-setup.
+
+Please:
+1. Inspect the repository and locate the directory containing SKILL.md and agents/openai.yaml.
+2. Install that directory as ~/.codex/skills/autodl-codex-setup.
+3. If an installation already exists, compare it first and do not overwrite local changes without asking.
+4. Validate the installed SKILL.md and report the installation path and result.
+5. Do not copy auth.json, tokens, passwords, private keys, device codes, or unrelated files into the Skill directory.
 ```
 
-The server-side Codex proxy endpoint is `http://127.0.0.1:<remote-proxy-port>`; the local proxy remains on `127.0.0.1:<local-proxy-port>`.
+### Option B: install manually
 
-## Install the Skill
-
-Clone this repository and copy the Skill directory into your Codex Skills directory:
+From a clone of this repository, copy the inner Skill directory:
 
 ```powershell
 Copy-Item .\autodl-codex-setup "$HOME\.codex\skills\autodl-codex-setup" -Recurse
 ```
 
-### Copy-paste installation prompt
+The installed directory should contain `SKILL.md`, `agents/openai.yaml`, and `scripts/regression_check.py`.
 
-Alternatively, copy this prompt into Codex to install the Skill automatically:
+## Configure a server with Codex
 
-```text
-Install the autodl-codex-setup Skill from https://github.com/linshenyoung/autodl-codex-setup into my user-level Codex Skills directory.
-
-Please:
-1. Inspect the repository structure before copying anything.
-2. Install the directory that contains SKILL.md and agents/openai.yaml as ~/.codex/skills/autodl-codex-setup.
-3. Prefer the available Skill installer when supported; otherwise clone or download the repository and copy the correct directory.
-4. Do not overwrite an existing installation without checking whether it is the same Skill and asking before replacing local changes.
-5. Validate the installed SKILL.md and report the exact installation path and validation result.
-6. Do not copy auth.json, tokens, passwords, private keys, device codes, or any unrelated repository files into the Skill directory.
-```
-
-Then ask Codex to configure a host, for example:
-
-```text
-Use autodl-codex-setup to configure this AutoDL host:
-Host autodl-example
-  HostName <your-autodl-host>
-  Port <ssh-port>
-  User <ssh-user>
-```
-
-## Copy-paste prompt for Codex
-
-After installing the Skill, copy the prompt below into Codex. Replace the values inside `<...>` first. GitHub's code blocks include a copy button.
+Replace every placeholder before sending this prompt:
 
 ```text
 Use the autodl-codex-setup Skill to configure Codex on this remote AutoDL server.
 
 SSH details:
-Host <ssh-alias>
+Host <unique-ssh-alias>
   HostName <your-autodl-host>
   Port <ssh-port>
   User <ssh-user>
@@ -81,51 +62,74 @@ Host <ssh-alias>
 Local HTTP proxy port: <local-proxy-port>
 Preferred unique remote proxy port: <remote-proxy-port>
 
-Please complete the workflow end to end:
-1. Inspect the local proxy, existing SSH host block, and the remote server's OS, Node.js, npm, Codex CLI, Codex config, VS Code settings, and login status.
-2. Add or update only this host's SSH RemoteForward so the remote proxy port maps to the local proxy port. Preserve unrelated settings and avoid port conflicts.
-3. Configure the remote Codex and VS Code proxy settings using the remote proxy port.
-4. Install Node.js and the official Codex CLI only if they are missing or unusable.
-5. Run `codex login --device-auth`. Show me the device URL and one-time code, then wait for me to finish browser confirmation before continuing.
-6. Verify `codex login status`, Codex version, SSH connectivity, and the end-to-end proxy path.
+Complete the workflow in separate, observable phases:
+1. Inspect the local proxy and SSH config, including duplicate hostname blocks. Prefer a unique alias and preserve unrelated entries.
+2. Add only a host-scoped RemoteForward from the remote proxy port to the local proxy port. Verify SSH with ExitOnForwardFailure=yes.
+3. Inspect the remote OS, disk, processes, Node.js, npm, Codex CLI, Codex config, VS Code settings, and login status.
+4. Configure only the Codex and VS Code proxy keys, preserving unrelated settings.
+5. Install Node.js and @openai/codex only when required, using bounded phases.
+6. Validate the proxy path with safe GET/HEAD checks. Do not POST to a device-auth endpoint as a network probe.
+7. Start codex login --device-auth only through a user-controlled interactive terminal. Do not print or persist the device code in automation logs.
+8. Verify codex login status, versions, SSH forwarding, proxy configuration, and cleanup of processes created by this run.
 
-Do not print or commit auth.json, tokens, passwords, private keys, device codes after use, or real infrastructure details. Do not claim completion until every verification step has passed. Report changed files, remote paths, ports, and any remaining manual action without exposing secrets.
+If login returns HTTP 403, report it as a Codex CLI request rejection; do not automatically conclude that SSH or the proxy is broken. Suggest a clean shell, WSL, another network, or an updated CLI as follow-up tests.
+
+Do not read, print, commit, or upload auth.json, tokens, passwords, private keys, device codes, or private infrastructure details. Do not copy an existing auth.json unless I explicitly authorize copying my existing Codex login to this confirmed target host.
 ```
 
-### Example values
+## SSH forwarding model
 
-Use values from your own server only; the following are intentionally non-real placeholders:
+The remote Codex process uses the remote loopback port. SSH carries that traffic back to the local proxy:
 
 ```text
-SSH alias: autodl-example
-HostName: <your-autodl-host>
-SSH port: <ssh-port>
-User: <ssh-user>
-Local proxy port: <local-proxy-port>
-Remote proxy port: <remote-proxy-port>
+remote Codex -> 127.0.0.1:<remote-proxy-port>
+           SSH RemoteForward
+local proxy  <- 127.0.0.1:<local-proxy-port>
 ```
 
-## Safety notes
+Example with placeholders only:
 
-- Give each host a unique remote forwarding port.
-- Preserve unrelated SSH, TOML, and JSON settings.
-- Never commit `auth.json`, tokens, passwords, private keys, or device codes.
-- A successful HTTP proxy test does not prove Codex authentication; verify with `codex login status`.
-- Public GitHub visibility does not grant permission to use code; see the license before reuse.
+```ssh
+Host <unique-ssh-alias>
+  HostName <your-autodl-host>
+  Port <ssh-port>
+  User <ssh-user>
+  RemoteForward <remote-proxy-port> 127.0.0.1:<local-proxy-port>
+```
+
+Do not reuse a hostname block when the SSH config already contains multiple blocks for that hostname. A unique alias avoids OpenSSH first-match surprises.
+
+## Validation and safety
+
+The Skill includes a static regression check that does not contact any server or read credentials:
+
+```powershell
+python .\autodl-codex-setup\scripts\regression_check.py
+```
+
+Important boundaries:
+
+- HTTP 421 or an auth endpoint returning 405 proves reachability, not authorization.
+- A device-auth POST may create a real one-time code; never use it as a probe.
+- A timed-out SSH command may leave processes behind; inspect exact PIDs and ports before retrying.
+- Never kill generic `sshd`, `node`, `codex`, `grep`, or training processes.
+- Copy an existing `auth.json` only after explicit user authorization, only when the remote file does not already exist, and verify only `codex login status` afterward.
 
 ## Repository layout
 
 ```text
 autodl-codex-setup/
-├── SKILL.md
-└── agents/
-    └── openai.yaml
+├── README.md
+├── README.zh-CN.md
+├── SECURITY.md
+└── autodl-codex-setup/
+    ├── SKILL.md
+    ├── agents/openai.yaml
+    └── scripts/regression_check.py
 ```
 
 ## License
 
-Released under the [MIT License](LICENSE).
+MIT. See [LICENSE](LICENSE).
 
-## Security
-
-Please see [SECURITY.md](SECURITY.md) for secret-handling guidance and vulnerability reports.
+For secret-handling guidance and responsible vulnerability reports, see [SECURITY.md](SECURITY.md).
