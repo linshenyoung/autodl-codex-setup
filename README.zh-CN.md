@@ -39,6 +39,22 @@ Host autodl-example
 Copy-Item .\autodl-codex-setup "$HOME\.codex\skills\autodl-codex-setup" -Recurse
 ```
 
+### 可直接复制给 Codex 的安装 Prompt
+
+也可以把下面的 Prompt 直接复制给 Codex，让 Codex 自动安装这个 Skill：
+
+```text
+请从 https://github.com/linshenyoung/autodl-codex-setup 安装 autodl-codex-setup Skill，安装到我的用户级 Codex Skills 目录。
+
+请完成以下事项：
+1. 先检查仓库结构，再执行复制或安装。
+2. 将包含 SKILL.md 和 agents/openai.yaml 的目录安装为 ~/.codex/skills/autodl-codex-setup。
+3. 如果当前环境支持 Skill installer，优先使用它；否则克隆或下载仓库后复制正确的目录。
+4. 如果目标目录已存在，先检查是否为同一个 Skill；不要未经确认覆盖本地修改。
+5. 校验安装后的 SKILL.md，并报告准确的安装路径和校验结果。
+6. 不要把 auth.json、Token、密码、私钥、设备验证码或仓库中的无关文件复制到 Skill 目录。
+```
+
 然后让 Codex 配置服务器，例如：
 
 ```text

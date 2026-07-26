@@ -39,6 +39,22 @@ Clone this repository and copy the Skill directory into your Codex Skills direct
 Copy-Item .\autodl-codex-setup "$HOME\.codex\skills\autodl-codex-setup" -Recurse
 ```
 
+### Copy-paste installation prompt
+
+Alternatively, copy this prompt into Codex to install the Skill automatically:
+
+```text
+Install the autodl-codex-setup Skill from https://github.com/linshenyoung/autodl-codex-setup into my user-level Codex Skills directory.
+
+Please:
+1. Inspect the repository structure before copying anything.
+2. Install the directory that contains SKILL.md and agents/openai.yaml as ~/.codex/skills/autodl-codex-setup.
+3. Prefer the available Skill installer when supported; otherwise clone or download the repository and copy the correct directory.
+4. Do not overwrite an existing installation without checking whether it is the same Skill and asking before replacing local changes.
+5. Validate the installed SKILL.md and report the exact installation path and validation result.
+6. Do not copy auth.json, tokens, passwords, private keys, device codes, or any unrelated repository files into the Skill directory.
+```
+
 Then ask Codex to configure a host, for example:
 
 ```text
