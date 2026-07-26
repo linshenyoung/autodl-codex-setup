@@ -30,7 +30,7 @@ REQUIRED = (
 
 FORBIDDEN = re.compile(
     r"Your" + r"God|example" + r"\.org|connect\." +
-    r"(?:west|bjb|cqa)\.seetacloud\.com|A6000" + r"Pro",
+    r"(?:west|bjb|cqa)\." + r"seeta" + r"cloud\.com|A6" + r"000" + r"Pro",
     re.IGNORECASE,
 )
 
