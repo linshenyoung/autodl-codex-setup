@@ -1,0 +1,13 @@
+# Local credentials and private infrastructure files
+auth.json
+**/auth.json
+.env
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Local tooling output
+.vscode/
+node_modules/
+__pycache__/

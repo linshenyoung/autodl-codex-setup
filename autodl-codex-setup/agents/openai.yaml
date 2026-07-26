@@ -1,0 +1,4 @@
+interface:
+  display_name: "AutoDL Codex Setup"
+  short_description: "Configure Codex on AutoDL through SSH proxy forwarding"
+  default_prompt: "Configure an AutoDL SSH host for remote Codex use, including proxy forwarding, server settings, installation, login, and verification."
